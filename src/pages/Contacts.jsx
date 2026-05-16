@@ -4,6 +4,11 @@ import axios from "axios";
 const API = "http://localhost:5000/api/contacts";
 const USERS_API = "http://localhost:5000/api/users";
 
+// Get token from localStorage
+const getToken = () => ({
+  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+});
+
 function Contacts() {
   const [contacts, setContacts] = useState([]);
   const [users, setUsers] = useState([]);
@@ -13,25 +18,25 @@ function Contacts() {
   const [relationship, setRelationship] = useState("");
 
   const fetchContacts = async () => {
-    const res = await axios.get(API);
+    const res = await axios.get(API, getToken());
     setContacts(res.data);
   };
 
   const fetchUsers = async () => {
-    const res = await axios.get(USERS_API);
+    const res = await axios.get(USERS_API, getToken());
     setUsers(res.data);
   };
 
   useEffect(() => { fetchContacts(); fetchUsers(); }, []);
 
   const createContact = async () => {
-    await axios.post(API, { userId, name, phone, relationship });
+    await axios.post(API, { userId, name, phone, relationship }, getToken());
     setName(""); setPhone(""); setRelationship(""); setUserId("");
     fetchContacts();
   };
 
   const deleteContact = async (id) => {
-    await axios.delete(`${API}/${id}`);
+    await axios.delete(`${API}/${id}`, getToken());
     fetchContacts();
   };
 

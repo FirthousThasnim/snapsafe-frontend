@@ -3,6 +3,11 @@ import axios from "axios";
 
 const API = "http://localhost:5000/api/users";
 
+// Get token from localStorage
+const getToken = () => ({
+  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+});
+
 function Users() {
   const [users, setUsers] = useState([]);
   const [name, setName] = useState("");
@@ -10,20 +15,20 @@ function Users() {
   const [phone, setPhone] = useState("");
 
   const fetchUsers = async () => {
-    const res = await axios.get(API);
+    const res = await axios.get(API, getToken());
     setUsers(res.data);
   };
 
   useEffect(() => { fetchUsers(); }, []);
 
   const createUser = async () => {
-    await axios.post(API, { name, email, phone });
+    await axios.post(API, { name, email, phone }, getToken());
     setName(""); setEmail(""); setPhone("");
     fetchUsers();
   };
 
   const deleteUser = async (id) => {
-    await axios.delete(`${API}/${id}`);
+    await axios.delete(`${API}/${id}`, getToken());
     fetchUsers();
   };
 
